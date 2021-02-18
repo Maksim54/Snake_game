@@ -15,7 +15,7 @@ namespace Snake1
 
         static void Main(string[] args)
         {
-            //подготовка "окна в котором будет передвигаться наша змейка"
+            //подготовка "окна" в котором будет передвигаться наша змейка
             Console.SetWindowSize(xM, yM);
             Console.SetBufferSize(xM, yM);
 
@@ -35,7 +35,7 @@ namespace Snake1
             foodCreator.setEventHandler(DrawPoint);
             foodCreator.CreateFood();
            
-            snake.Eaten += foodCreator.CreateFood; //сигнал от змейки, что она поела, надо создавать еще еду
+            snake.Eaten += foodCreator.CreateFood; //сигнал от змейки, что она поела,после чего создается новая еда
             snake.Hit += SnakeHit; //сигнал от змейки, что она ударилась
 
             //
