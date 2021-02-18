@@ -33,7 +33,7 @@ namespace Snake1
         {
            pList.First().Erase();
 
-           //Собственно движение змейки
+           //Движение змейки
            for (int i = 0; i < pList.Count-1; i++)
            {
                 pList[i].Move(pList[i+1]);
@@ -41,7 +41,7 @@ namespace Snake1
 
             pList.Last().Move(dir);
 
-            //Проверка не врезались ли в хвост
+            //Проверка чтобы не врезалась в хвост
             TailHitProve();
         }
 
