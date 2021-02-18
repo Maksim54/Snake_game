@@ -4,48 +4,46 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Snake1
+namespace Snake
 {
-    class Walls
-    {
+	class Walls
+	{
+		List<Figure> wallList;
 
+		public Walls( int mapWidth, int mapHeight )
+		{
+			wallList = new List<Figure>();
 
-        List<Figure> lines;
+			// Отрисовка рамочки
+			HorizontalLine upLine = new HorizontalLine( 0, mapWidth - 2, 0, '+' );
+			HorizontalLine downLine = new HorizontalLine( 0, mapWidth - 2, mapHeight - 1, '+' );
+			VerticalLine leftLine = new VerticalLine( 0, mapHeight - 1, 0, '+' );
+			VerticalLine rightLine = new VerticalLine( 0, mapHeight - 1, mapWidth - 2, '+' );
 
-        public Walls(int mapWidth, int mapHeight, char sym = '+')
-        {
-            mapWidth  -= 2;
-            mapHeight -= 2;
+			wallList.Add( upLine );
+			wallList.Add( downLine );
+			wallList.Add( leftLine );
+			wallList.Add( rightLine );
+		}
 
-            lines = new List<Figure>();
+		internal bool IsHit( Figure figure )
+		{
+			foreach(var wall in wallList)
+			{
+				if(wall.IsHit(figure))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 
-            lines.Add(new HorisontalLine(       0, mapWidth,         0, sym));
-            lines.Add(new HorisontalLine(       0, mapWidth, mapHeight, sym));
-            lines.Add(new   VerticalLine(       0,        0, mapHeight, sym));
-            lines.Add(new   VerticalLine(mapWidth,        0, mapHeight, sym));
-        }
-
-        public void setDrawEventHandler(EventHandler<PointEventArgs> handler)
-        {
-            foreach (Figure fig in lines)
-                fig.setEventHandler(handler);
-        }
-
-        public void Draw()
-        {
-            foreach (Figure fig in lines)
-                fig.Draw();
-        }
-
-        public bool isHit(Point p)
-        {
-            foreach (Figure fig in lines)
-            {
-                foreach (Point pFig in fig)
-                    if (p == pFig)
-                        return true;
-            }
-            return false;
-        }
-    }
+		public void Draw()
+		{
+			foreach ( var wall in wallList )
+			{
+				wall.Draw();
+			}
+		}
+	}
 }

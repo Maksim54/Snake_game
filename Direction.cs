@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Snake1
+namespace Snake
 {
-    enum Direction
-    {
-        Up, 
-        Down, 
-        Left, 
-        Right
-    }
+	enum Direction
+	{
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN
+	}
 }

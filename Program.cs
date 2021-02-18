@@ -3,78 +3,74 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace Snake1
+namespace Snake
 {
-    class Program
-    {
-        const int xM = 80;
-        const int yM = 26;
-        static bool gameOver = false;
+	class Program
+	{
+		static void Main( string[] args )
+		{
+			Console.SetBufferSize( 80, 25 );
 
-        static void Main(string[] args)
-        {
-            //подготовка "окна" в котором будет передвигаться наша змейка
-            Console.SetWindowSize(xM, yM);
-            Console.SetBufferSize(xM, yM);
+			Walls walls = new Walls( 80, 25 );
+			walls.Draw();
 
-            Walls walls = new Walls(xM, yM);
-            walls.setDrawEventHandler(DrawPoint);
-            walls.Draw();
-            ///////////////////////////////////
+			// Отрисовка точек			
+			Point p = new Point( 4, 5, '*' );
+			Snake snake = new Snake( p, 4, Direction.RIGHT );
+			snake.Draw();
 
-            //Создадим змейку
-            Snake snake = new Snake(2, 10, 4, Direction.Right);
-            snake.setEventHandler(DrawPoint);
-            snake.Draw();
-            ///////////////////////////////////////
+			FoodCreator foodCreator = new FoodCreator( 80, 25, '$' );
+			Point food = foodCreator.CreateFood();
+			food.Draw();
 
-            //Создадим "генератор еды"
-            FoodCreator foodCreator = new FoodCreator(xM, yM, '$');
-            foodCreator.setEventHandler(DrawPoint);
-            foodCreator.CreateFood();
-           
-            snake.Eaten += foodCreator.CreateFood; //сигнал от змейки, что она поела,после чего создается новая еда
-            snake.Hit += SnakeHit; //сигнал от змейки, что она ударилась
+			while (true)
+			{
+				if ( walls.IsHit(snake) || snake.IsHitTail() )
+				{
+					break;
+				}
+				if(snake.Eat( food ) )
+				{
+					food = foodCreator.CreateFood();
+					food.Draw();
+				}
+				else
+				{
+					snake.Move();
+				}
 
-            //
-            Console.CursorVisible = false;
-            Console.SetCursorPosition(40, 10);
-
-            while (!gameOver)
-            {
-                if (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true); //без true рамка будет съедаться змейкой
-                    if (keyInfo.Key == ConsoleKey.Escape)
-                        break;
-
-                    snake.KeyHandleConsole(keyInfo.Key);
-                }
-
-                Thread.Sleep(300);
-                snake.Move();
-                snake.Eat(foodCreator.food);
-                snake.HitProve(walls);
-            }
+				Thread.Sleep( 100 );
+				if ( Console.KeyAvailable )
+				{
+					ConsoleKeyInfo key = Console.ReadKey();
+					snake.HandleKey( key.Key );
+				}
+			}
+			WriteGameOver();
+			Console.ReadLine();
+      }
 
 
-            Console.ReadKey();
-        }
+		static void WriteGameOver()
+		{
+			int xOffset = 25;
+			int yOffset = 8;
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.SetCursorPosition( xOffset, yOffset++ );
+			WriteText( "============================", xOffset, yOffset++ );
+			WriteText( "И Г Р А    О К О Н Ч Е Н А", xOffset + 1, yOffset++ );
+			yOffset++;
+			WriteText( "Автор: Евгений Картавец", xOffset + 2, yOffset++ );
+			WriteText( "Специально для GeekBrains", xOffset + 1, yOffset++ );
+			WriteText( "============================", xOffset, yOffset++ );
+		}
 
-        static void DrawPoint(object sender, PointEventArgs e)
-        {
-            Console.SetCursorPosition(e.X, e.Y);
-            Console.WriteLine(e.Sym);
-        }
+		static void WriteText( String text, int xOffset, int yOffset )
+		{
+			Console.SetCursorPosition( xOffset, yOffset );
+			Console.WriteLine( text );
+		}
 
-        static void SnakeHit(object sender, SnakeEventArgs e)
-        {
-            gameOver = true;
-            Console.SetCursorPosition(xM/2, yM/2);
-            Console.WriteLine(e.Message);
-        }
-
-    }
+	}
 }

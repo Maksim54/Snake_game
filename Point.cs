@@ -4,112 +4,72 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Snake1
+namespace Snake
 {
-    class Point
-    {
-        public int X   { get; set; }
-        public int Y   { get; set; }
-        public char Sym { get; set; }
+	class Point
+	{
+		public int x;
+		public int y;
+		public char sym;
 
-        public Point(int x = 0, int y = 0, char sym = '*')
-        {
-            X = x; Y = y; Sym = sym;
-        }
+		public Point()
+		{
+		}
 
-        public Point(Point p) : this(p.X, p.Y, p.Sym) { }
+		public Point(int x, int y, char sym)
+		{
+			this.x = x;
+			this.y = y;
+			this.sym = sym;
+		}
 
-        protected internal event EventHandler<PointEventArgs> Drawn;
-        protected internal void CallEvent(PointEventArgs e, EventHandler<PointEventArgs> handler)
-        {
-            if (e != null && handler != null)
-                handler.Invoke(this, e);
-        }
-        protected internal void OnDrawn(PointEventArgs e)
-        {
-            CallEvent(e, Drawn);
-        }
+		public Point(Point p)
+		{
+			x = p.x;
+			y = p.y;
+			sym = p.sym;
+		}
 
-        public void Draw()
-        {
-            OnDrawn(new PointEventArgs(X, Y, Sym));
-        }
+		public void Move(int offset, Direction direction)
+		{
+			if(direction == Direction.RIGHT)
+			{
+				x = x + offset;
+			}
+			else if(direction == Direction.LEFT)
+			{
+				x = x - offset;
+			}
+			else if(direction == Direction.UP)
+			{
+				y = y - offset;
+			}
+			else if(direction == Direction.DOWN)
+			{
+				y = y + offset;
+			}
+		}
 
-        public void Erase()
-        {
-            char temp = Sym;
-            Sym = ' ';
-            Draw();
-            Sym = temp;
-        }
+		public bool IsHit(Point p)
+		{
+			return p.x == this.x && p.y == this.y;
+		}
 
-        public void Move(int x, int y)
-        {
-            X = x; Y = y;
-            Draw();
-        }
+		public void Draw()
+		{
+			Console.SetCursorPosition( x, y );
+			Console.Write( sym );			
+		}
 
-        public void Move(Point p)
-        {
-            Move(p.X, p.Y);
-        }
+		public void Clear()
+		{
+			sym = ' ';
+			Draw();
+		}
 
-        public void Move(Direction dir, int step)
-        {
-            switch (dir)
-            {
-                case Direction.Down:
-                    {
-                        Move(X, Y + step);
-                        break;
-                    }
-                case Direction.Up:
-                    {
-                        Move(X, Y - step);
-                        break;
-                    }
-                case Direction.Left:
-                    {
-                        Move(X - step, Y);
-                        break;
-                    }
-                case Direction.Right:
-                    {
-                        Move(X + step, Y);
-                        break;
-                    }
-            }
-        }
-
-        public void Move(Direction dir)
-        {
-            Move(dir, 1);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(obj is Point)
-            {
-                Point p = (Point) obj;
-                if (this.X == p.X && this.Y == p.Y)
-                    return true;
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ToString().GetHashCode();
-        }
-
-        public static bool operator ==(Point p1, Point p2)
-        {
-            return p1.Equals(p2);
-        }
-
-        public static bool operator !=(Point p1, Point p2)
-        {
-            return !p1.Equals(p2);
-        }
-    }
+		public override string ToString()
+		{
+			return x + ", " + y + ", " + sym;
+		}
+	}
 }
